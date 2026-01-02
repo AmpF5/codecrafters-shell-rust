@@ -5,13 +5,8 @@ pub struct NotFound {
 }
 
 impl NotFound {
-    pub fn new(cmd: &Command) -> NotFound {
-        match cmd {
-            Command::NotFound(cmd) => NotFound {
-                cmd: cmd.to_string(),
-            },
-            Command::Exit => panic!(),
-        }
+    pub fn new(cmd: &String) -> NotFound {
+        NotFound { cmd: cmd.clone() }
     }
 }
 

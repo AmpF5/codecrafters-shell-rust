@@ -18,7 +18,12 @@ fn main() {
             .read_line(&mut input)
             .expect("Cannot read command");
 
-        let parsed_cmd = Command::match_cmd(input.trim());
+        let cmd = input.split_whitespace().collect::<Vec<&str>>();
+        if cmd.is_empty() {
+            continue;
+        }
+
+        let parsed_cmd = Command::match_cmd(&cmd);
 
         parsed_cmd.execute();
     }
