@@ -2,14 +2,18 @@
 use std::io::{self, Write};
 
 fn main() {
-    print!("$ ");
-    io::stdout().flush().unwrap();
-    let mut cmd = String::new();
+    let mut input = String::new();
 
     loop {
-        cmd.clear();
-        io::stdin().read_line(&mut cmd).unwrap();
-        cmd = cmd.trim_end().trim_start().to_string();
+        print!("$ ");
+        io::stdout().flush().unwrap();
+        input.clear();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Cannot read command");
+
+        let cmd = input.trim();
+
         println!("{cmd}: command not found")
     }
 }
