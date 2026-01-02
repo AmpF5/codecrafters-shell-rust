@@ -1,12 +1,14 @@
-use crate::{command::Command, execute::Execute};
+use crate::execute::Execute;
 
 pub struct NotFound {
     cmd: String,
 }
 
 impl NotFound {
-    pub fn new(cmd: &String) -> NotFound {
-        NotFound { cmd: cmd.clone() }
+    pub fn new(cmd: &str) -> NotFound {
+        NotFound {
+            cmd: cmd.to_string(),
+        }
     }
 }
 
