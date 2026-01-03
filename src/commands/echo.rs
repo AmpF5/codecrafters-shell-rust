@@ -1,19 +1,7 @@
-use crate::execute::Execute;
-
-pub struct Echo {
-    cmd: String,
-}
+pub struct Echo {}
 
 impl Echo {
-    pub fn new(cmd: &str) -> Echo {
-        Echo {
-            cmd: cmd.to_string(),
-        }
-    }
-}
-
-impl Execute for Echo {
-    fn execute(&self) {
-        println!("{}", self.cmd)
+    pub fn execute(value: &String) {
+        println!("{}", value)
     }
 }

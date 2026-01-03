@@ -8,7 +8,6 @@ use crate::{command::Command, execute::Execute};
 
 fn main() {
     let mut input = String::new();
-
     loop {
         print!("$ ");
 
@@ -23,7 +22,7 @@ fn main() {
             continue;
         }
 
-        let parsed_cmd = Command::match_cmd(&cmd);
+        let parsed_cmd = Command::new(&cmd);
 
         parsed_cmd.execute();
     }
