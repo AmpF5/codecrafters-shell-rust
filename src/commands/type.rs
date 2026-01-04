@@ -13,14 +13,12 @@ impl Type {
             } else if let Ok(paths) = env::var(key) {
                 for path in env::split_paths(&paths) {
                     let path_to_command = format!("{}/{}", path.display(), command);
-                    match fs::metadata(&path_to_command) {
-                        Ok(file) => {
-                            if file.is_file() && file.permissions().mode() & 0o111 != 0 {
-                                println!("{command} is {path_to_command}");
-                                return;
-                            }
-                        }
-                        Err(_) => continue,
+                    if let Ok(file) = fs::metadata(&path_to_command)
+                        && file.is_file()
+                        && file.permissions().mode() & 0o111 != 0
+                    {
+                        println!("{command} is {path_to_command}");
+                        return;
                     }
                 }
                 println!("{}: not found", command);
