@@ -16,17 +16,25 @@ pub enum Command<'a> {
 
 impl<'a> Command<'a> {
     pub fn new(cmd: &'a [&'a str]) -> Command<'a> {
-        match cmd[0] {
-            "exit" => Command::Exit,
-            "echo" => Command::Echo {
-                value: cmd[1..].join(" "),
-            },
-            "type" => Command::Type { values: &cmd[1..] },
-            "exec" => Command::Exec {
-                value: cmd[1],
-                args: &cmd[1..],
-            },
-            _ => Command::NotFound { command: cmd[0] },
+        let input = cmd[0];
+
+        if COMMANDS.contains(&input) {
+            match input {
+                "exit" => Command::Exit,
+                "echo" => Command::Echo {
+                    value: cmd[1..].join(" "),
+                },
+                "type" => Command::Type { values: &cmd[1..] },
+                _ => Command::NotFound { command: cmd[0] },
+            }
+        } else {
+            match crate::utils::files::find_exe_in_env(input) {
+                Some(_) => Command::Exec {
+                    value: input,
+                    args: &cmd[1..],
+                },
+                None => Command::NotFound { command: cmd[0] },
+            }
         }
     }
 }
