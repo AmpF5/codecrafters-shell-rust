@@ -8,6 +8,6 @@ impl Exec {
         command.args(args);
         let output = command.output().expect("Faile to execute program");
         let stdout = String::from_utf8_lossy(&output.stdout);
-        println!("{}", stdout);
+        print!("{}", stdout);
     }
 }

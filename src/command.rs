@@ -31,7 +31,7 @@ impl<'a> Command<'a> {
             match crate::utils::files::find_exe_in_env(input) {
                 Some(_) => Command::Exec {
                     value: input,
-                    args: &cmd[0..],
+                    args: &cmd[1..],
                 },
                 None => Command::NotFound { command: cmd[0] },
             }
