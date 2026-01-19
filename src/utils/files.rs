@@ -2,6 +2,7 @@ use std::{
     env,
     fs::{self},
     os::unix::fs::PermissionsExt,
+    path::PathBuf,
 };
 
 const KEY: &str = "PATH";
@@ -20,4 +21,8 @@ pub fn find_exe_in_env(cmd: &str) -> Option<String> {
         }
     }
     None
+}
+
+pub fn is_dir_exists(path: &str) -> bool {
+    PathBuf::from(&path).is_dir()
 }

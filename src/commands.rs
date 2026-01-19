@@ -1,3 +1,4 @@
+pub mod cd;
 pub mod echo;
 pub mod exec;
 pub mod exit;

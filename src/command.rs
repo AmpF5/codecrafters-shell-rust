@@ -1,9 +1,11 @@
 use crate::{
-    commands::{echo::Echo, exec::Exec, exit::Exit, notfound::NotFound, pwd::Pwd, r#type::Type},
+    commands::{
+        cd::Cd, echo::Echo, exec::Exec, exit::Exit, notfound::NotFound, pwd::Pwd, r#type::Type,
+    },
     execute::Execute,
 };
 
-pub const COMMANDS: [&str; 4] = ["echo", "exit", "type", "pwd"];
+pub const COMMANDS: [&str; 5] = ["echo", "exit", "type", "pwd", "cd"];
 
 #[derive(Clone)]
 pub enum Command<'a> {
@@ -13,6 +15,7 @@ pub enum Command<'a> {
     Type { values: &'a [&'a str] },
     Exec { value: &'a str, args: &'a [&'a str] },
     Pwd,
+    Cd { path: &'a str },
 }
 
 impl<'a> Command<'a> {
@@ -27,6 +30,7 @@ impl<'a> Command<'a> {
                 },
                 "type" => Command::Type { values: &cmd[1..] },
                 "pwd" => Command::Pwd,
+                "cd" => Command::Cd { path: cmd[1] },
                 _ => Command::NotFound { command: cmd[0] },
             }
         } else {
@@ -50,6 +54,7 @@ impl<'a> Execute for Command<'a> {
             Command::Type { values } => Type::execute(values),
             Command::Echo { value } => Echo::execute(value),
             Command::Pwd => Pwd::execute(),
+            Command::Cd { path: value } => Cd::execute(value),
         }
     }
 }
