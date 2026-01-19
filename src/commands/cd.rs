@@ -10,7 +10,7 @@ impl Cd {
                 if crate::utils::files::is_dir_exists(path) {
                     path
                 } else {
-                    println!("cd: {path}: No such file or directory!");
+                    println!("cd: {path}: No such file or directory");
                     return;
                 }
             }
