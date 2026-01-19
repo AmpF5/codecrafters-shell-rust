@@ -1,5 +1,5 @@
 use crate::{
-    commands::{echo::Echo, exit::Exit, notfound::NotFound, r#type::Type},
+    commands::{echo::Echo, exec::Exec, exit::Exit, notfound::NotFound, r#type::Type},
     execute::Execute,
 };
 
@@ -10,7 +10,8 @@ pub enum Command<'a> {
     Exit,
     NotFound { command: &'a str },
     Echo { value: String },
-    Type { values: Vec<&'a str> },
+    Type { values: &'a [&'a str] },
+    Exec { value: &'a str, args: &'a [&'a str] },
 }
 
 impl<'a> Command<'a> {
@@ -20,8 +21,10 @@ impl<'a> Command<'a> {
             "echo" => Command::Echo {
                 value: cmd[1..].join(" "),
             },
-            "type" => Command::Type {
-                values: cmd.iter().skip(1).copied().collect(),
+            "type" => Command::Type { values: &cmd[1..] },
+            "exec" => Command::Exec {
+                value: cmd[1],
+                args: &cmd[1..],
             },
             _ => Command::NotFound { command: cmd[0] },
         }
@@ -33,8 +36,9 @@ impl<'a> Execute for Command<'a> {
         match self {
             Command::Exit => Exit::execute(),
             Command::NotFound { command } => NotFound::execute(command),
-            Command::Echo { value } => Echo::execute(value),
+            Command::Exec { value, args } => Exec::execute(value, args),
             Command::Type { values } => Type::execute(values),
+            Command::Echo { value } => Echo::execute(value),
         }
     }
 }

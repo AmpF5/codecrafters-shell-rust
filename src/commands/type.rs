@@ -1,29 +1,16 @@
-use std::{env, fs, os::unix::fs::PermissionsExt};
-
-use crate::command::COMMANDS;
+use crate::{command::COMMANDS, utils::files::find_exe_in_env};
 
 pub struct Type {}
 
 impl Type {
     pub fn execute(values: &[&str]) {
-        let key = "PATH";
-        for &command in values.iter() {
-            if COMMANDS.contains(&command) {
-                println!("{} is a shell builtin", command);
-            } else if let Ok(paths) = env::var(key) {
-                for path in env::split_paths(&paths) {
-                    let path_to_command = format!("{}/{}", path.display(), command);
-                    if let Ok(file) = fs::metadata(&path_to_command)
-                        && file.is_file()
-                        && file.permissions().mode() & 0o111 != 0
-                    {
-                        println!("{command} is {path_to_command}");
-                        return;
-                    }
-                }
-                println!("{}: not found", command);
+        for &cmd in values.iter() {
+            if COMMANDS.contains(&cmd) {
+                println!("{} is a shell builtin", cmd);
+            } else if let Some(path) = find_exe_in_env(cmd) {
+                println!("{cmd} is {path}")
             } else {
-                println!("{}: not found", command);
+                println!("{}: not found", cmd);
             }
         }
     }
