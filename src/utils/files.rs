@@ -7,20 +7,16 @@ use std::{
 
 const KEY: &str = "PATH";
 
-pub fn find_exe_in_env(cmd: &str) -> Option<String> {
+pub fn find_exe_in_env(cmd: &str) -> Option<PathBuf> {
     let paths = env::var(KEY).ok()?;
 
-    for path in env::split_paths(&paths) {
-        let cmd_path = format!("{}/{}", path.display(), cmd);
-
-        if let Ok(metadata) = fs::metadata(&cmd_path)
-            && metadata.is_file()
-            && metadata.permissions().mode() & 0o111 != 0
-        {
-            return Some(cmd_path);
-        }
-    }
-    None
+    env::split_paths(&paths)
+        .map(|f| f.join(cmd))
+        .find(|cmd_path| {
+            fs::metadata(cmd_path)
+                .map(|md| md.is_file() && md.permissions().mode() & 0o111 != 0)
+                .unwrap_or(false)
+        })
 }
 
 pub fn is_dir_exists(path: &str) -> bool {

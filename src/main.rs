@@ -1,18 +1,20 @@
 mod command;
 mod commands;
-mod execute;
 mod utils;
 
 use std::io::{self, Write};
 
-use crate::{command::Command, execute::Execute};
+use crate::command::Command;
 
 fn main() {
     let mut input = String::new();
     loop {
         print!("$ ");
 
-        io::stdout().flush().unwrap();
+        if let Err(err) = io::stdout().flush() {
+            eprintln!("error: {}", err)
+        }
+
         input.clear();
         io::stdin()
             .read_line(&mut input)

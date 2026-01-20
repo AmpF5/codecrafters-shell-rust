@@ -1,7 +1,3 @@
-pub struct NotFound {}
-
-impl NotFound {
-    pub fn execute(command: &str) {
-        println!("{}: command not found", command)
-    }
+pub fn execute(command: &str) {
+    eprintln!("{}: command not found", command)
 }
