@@ -5,55 +5,54 @@ pub const COMMANDS: [&str; 5] = ["echo", "exit", "type", "pwd", "cd"];
 #[derive(Clone)]
 pub enum Command<'a> {
     Exit,
-    NotFound { command: &'a str },
-    Echo { value: &'a [&'a str] },
-    Type { values: &'a [&'a str] },
-    Exec { value: &'a str, args: &'a [&'a str] },
+    NotFound { cmd: &'a str },
+    Echo { args: &'a str },
+    Type { args: &'a str },
+    Exec { cmd: &'a str, args: &'a str },
     Pwd,
-    Cd { path: &'a str },
+    Cd { args: &'a str },
 }
 
 impl<'a> Command<'a> {
-    pub fn new(cmd: &'a [&'a str]) -> Command<'a> {
-        let input = cmd[0];
+    pub fn new(input: &'a str) -> Command<'a> {
+        let (cmd, args) = crate::utils::string::get_cmd_and_args(input);
+        // println!("0:{} 1:{:?}", cmd, args);
 
-        if COMMANDS.contains(&input) {
-            match input {
+        if COMMANDS.contains(&cmd) {
+            match cmd {
                 "exit" => Command::Exit,
-                "echo" => Command::Echo { value: &cmd[1..] },
-                "type" => Command::Type { values: &cmd[1..] },
+                "echo" => Command::Echo {
+                    args: args.unwrap_or_default(),
+                },
+                "type" => Command::Type {
+                    args: args.unwrap_or_default(),
+                },
                 "pwd" => Command::Pwd,
-                "cd" => {
-                    if cmd.len() > 1 {
-                        Command::Cd { path: cmd[1] }
-                    } else {
-                        Command::Cd { path: "~" }
-                    }
-                }
-                _ => Command::NotFound { command: cmd[0] },
+                "cd" => Command::Cd {
+                    args: args.unwrap_or("~"),
+                },
+                _ => Command::NotFound { cmd },
             }
         } else {
-            match crate::utils::files::find_exe_in_env(input) {
+            match crate::utils::files::find_exe_in_env(cmd) {
                 Some(_) => Command::Exec {
-                    value: input,
-                    args: &cmd[1..],
+                    cmd,
+                    args: args.unwrap_or_default(),
                 },
-                None => Command::NotFound { command: cmd[0] },
+                None => Command::NotFound { cmd },
             }
         }
     }
-}
 
-impl<'a> Command<'a> {
     pub fn execute(&self) {
         match self {
             Command::Exit => commands::exit::execute(),
-            Command::NotFound { command } => commands::notfound::execute(command),
-            Command::Exec { value, args } => commands::exec::execute(value, args),
-            Command::Type { values } => commands::r#type::execute(values),
-            Command::Echo { value } => commands::echo::execute(value),
+            Command::NotFound { cmd } => commands::notfound::execute(cmd),
+            Command::Exec { cmd, args } => commands::exec::execute(cmd, args),
+            Command::Type { args } => commands::r#type::execute(args),
+            Command::Echo { args } => commands::echo::execute(args),
             Command::Pwd => commands::pwd::execute(),
-            Command::Cd { path: value } => commands::cd::execute(value),
+            Command::Cd { args } => commands::cd::execute(args),
         }
     }
 }

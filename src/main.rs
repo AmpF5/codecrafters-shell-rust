@@ -20,12 +20,11 @@ fn main() {
             .read_line(&mut input)
             .expect("Cannot read command");
 
-        let cmd = input.split_whitespace().collect::<Vec<&str>>();
-        if cmd.is_empty() {
+        if input.is_empty() {
             continue;
         }
 
-        let parsed_cmd = Command::new(&cmd);
+        let parsed_cmd = Command::new(&input);
 
         parsed_cmd.execute();
     }
