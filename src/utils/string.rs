@@ -16,14 +16,14 @@ pub fn get_formatted_input(args: &str) -> Vec<String> {
     let mut is_literal = false;
 
     for ch in args.trim().chars() {
-        if ch == '\\' {
-            is_literal = true;
-            continue;
-        }
-
         if is_literal {
             word_to_append.push(ch);
             is_literal = false;
+            continue;
+        }
+
+        if ch == '\\' {
+            is_literal = true;
             continue;
         }
 
