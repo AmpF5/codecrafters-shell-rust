@@ -1,4 +1,6 @@
 const SPECIAL_CHARS: [char; 1] = ['\''];
+const ESCAPED_CHARS_BY_BACKSLASH_IN_DOUBLE_QUOTES: [char; 5] = ['"', '\\', '$', '`', 'n'];
+
 /// Return [Vec<&str>] of length 2 which
 /// command as a first value
 /// args as second value
@@ -17,13 +19,18 @@ pub fn get_formatted_input(args: &str) -> Vec<String> {
 
     for ch in args.trim().chars() {
         if literal_mode {
-            word_to_append.push(ch);
             literal_mode = false;
+
+            if double_quotes && !ESCAPED_CHARS_BY_BACKSLASH_IN_DOUBLE_QUOTES.contains(&ch) {
+                word_to_append.push('\\');
+            }
+
+            word_to_append.push(ch);
             continue;
         }
 
-        // check if we can enter literal mode -- cannot be entered when quotes_mode is on
-        if ch == '\\' && !(single_quotes || double_quotes) {
+        // check if we can enter literal mode -- cannot be entered when single_quotes_mode is on
+        if ch == '\\' && !single_quotes {
             literal_mode = true;
             continue;
         }
