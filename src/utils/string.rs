@@ -13,36 +13,42 @@ pub fn get_formatted_input(args: &str) -> Vec<String> {
 
     let mut single_quotes = false;
     let mut double_quotes = false;
-    let mut is_literal = false;
+    let mut literal_mode = false;
 
     for ch in args.trim().chars() {
-        if is_literal {
+        if literal_mode {
             word_to_append.push(ch);
-            is_literal = false;
+            literal_mode = false;
             continue;
         }
 
-        if ch == '\\' {
-            is_literal = true;
+        // check if we can enter literal mode -- cannot be entered when quotes_mode is on
+        if ch == '\\' && !(single_quotes || double_quotes) {
+            literal_mode = true;
             continue;
         }
 
+        // handle single quotes
         if ch == '\'' && !double_quotes {
             single_quotes = !single_quotes;
             continue;
         }
 
+        // handle single quotes
         if ch == '"' && !single_quotes {
             double_quotes = !double_quotes;
             continue;
         }
 
+        // handle char
         if ch == ' ' {
             if !(single_quotes || double_quotes) {
+                // prevent appending empty String to result
                 if word_to_append.is_empty() {
                     continue;
                 }
 
+                // we are not in any quotes mode so ' ' means next word
                 r.push(word_to_append.clone());
                 word_to_append.clear();
             } else {
