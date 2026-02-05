@@ -16,10 +16,6 @@ pub enum Command {
 impl Command {
     pub fn new(input: &str) -> Command {
         let (cmd, args) = crate::utils::string::get_cmd_and_args(input);
-        println!(
-            "parsed {:?}",
-            crate::utils::string::get_formatted_input(input)
-        );
 
         if COMMANDS.contains(&cmd.as_str()) {
             match cmd.as_str() {
