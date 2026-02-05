@@ -1,12 +1,14 @@
-const SPECIAL_CHARS: [char; 1] = ['\''];
 const ESCAPED_CHARS_BY_BACKSLASH_IN_DOUBLE_QUOTES: [char; 5] = ['"', '\\', '$', '`', 'n'];
 
-/// Return [Vec<&str>] of length 2 which
-/// command as a first value
-/// args as second value
-pub fn get_cmd_and_args(input: &str) -> (&str, Option<&str>) {
-    let v = input.trim_end().splitn(2, " ").collect::<Vec<&str>>();
-    (v[0], v.get(1).copied())
+/// Splits [&str] at the first " "
+/// # Returns
+/// Tuple of 2 with optional second value
+///
+/// # Safety
+/// Input cannot be empty
+pub fn get_cmd_and_args(input: &str) -> (String, Option<String>) {
+    let v = get_formatted_input(input);
+    (v[0].clone(), v.get(1).cloned())
 }
 
 pub fn get_formatted_input(args: &str) -> Vec<String> {
@@ -70,40 +72,3 @@ pub fn get_formatted_input(args: &str) -> Vec<String> {
 
     r
 }
-
-//
-// pub fn get_formatted_input(args: &str) -> Vec<String> {
-//     let mut r = Vec::new();
-//     let mut word = String::new();
-//     let mut s: Vec<char> = Vec::new();
-//
-//     for ch in args.trim().chars() {
-//         if SPECIAL_CHARS.contains(&ch) {
-//             match s.last() {
-//                 Some(last_char) => {
-//                     if *last_char == ch {
-//                         s.pop();
-//                     } else {
-//                         s.push(ch);
-//                     }
-//                 }
-//                 None => s.push(ch),
-//             }
-//         } else if ch == ' ' {
-//             if s.is_empty() {
-//                 if !word.is_empty() {
-//                     r.push(word.clone());
-//                     word.clear();
-//                 }
-//             } else {
-//                 word.push(ch);
-//             }
-//         } else {
-//             word.push(ch);
-//         }
-//     }
-//
-//     r.push(word);
-//
-//     r
-// }

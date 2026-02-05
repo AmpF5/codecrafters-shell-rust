@@ -8,7 +8,12 @@ use std::{
 const KEY: &str = "PATH";
 
 pub fn find_exe_in_env(cmd: &str) -> Option<PathBuf> {
+    let parsed_cmd = crate::utils::string::get_formatted_input(cmd).join(" ");
+    println!("find exe {}", &cmd);
+    println!("parsed exe {}", &parsed_cmd);
     let paths = env::var(KEY).ok()?;
+
+    // println!("{:?}", &paths);
 
     env::split_paths(&paths)
         .map(|f| f.join(cmd))

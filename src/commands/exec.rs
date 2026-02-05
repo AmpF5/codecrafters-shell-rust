@@ -1,6 +1,7 @@
 use std::process::Command;
 
 pub fn execute(cmd: &str, args: &str) {
+    println!("cmd: {}, args: {}", &cmd, &args);
     let mut command = Command::new(cmd);
     command.args(crate::utils::string::get_formatted_input(args));
     match command.output() {

@@ -3,23 +3,26 @@ use crate::commands::{self};
 pub const COMMANDS: [&str; 5] = ["echo", "exit", "type", "pwd", "cd"];
 
 #[derive(Clone)]
-pub enum Command<'a> {
+pub enum Command {
     Exit,
-    NotFound { cmd: &'a str },
-    Echo { args: &'a str },
-    Type { args: &'a str },
-    Exec { cmd: &'a str, args: &'a str },
+    NotFound { cmd: String },
+    Echo { args: String },
+    Type { args: String },
+    Exec { cmd: String, args: String },
     Pwd,
-    Cd { args: &'a str },
+    Cd { args: String },
 }
 
-impl<'a> Command<'a> {
-    pub fn new(input: &'a str) -> Command<'a> {
+impl Command {
+    pub fn new(input: &str) -> Command {
         let (cmd, args) = crate::utils::string::get_cmd_and_args(input);
-        // println!("0:{} 1:{:?}", cmd, args);
+        println!(
+            "parsed {:?}",
+            crate::utils::string::get_formatted_input(input)
+        );
 
-        if COMMANDS.contains(&cmd) {
-            match cmd {
+        if COMMANDS.contains(&cmd.as_str()) {
+            match cmd.as_str() {
                 "exit" => Command::Exit,
                 "echo" => Command::Echo {
                     args: args.unwrap_or_default(),
@@ -29,12 +32,12 @@ impl<'a> Command<'a> {
                 },
                 "pwd" => Command::Pwd,
                 "cd" => Command::Cd {
-                    args: args.unwrap_or("~"),
+                    args: args.unwrap_or("~".to_owned()),
                 },
                 _ => Command::NotFound { cmd },
             }
         } else {
-            match crate::utils::files::find_exe_in_env(cmd) {
+            match crate::utils::files::find_exe_in_env(&cmd) {
                 Some(_) => Command::Exec {
                     cmd,
                     args: args.unwrap_or_default(),
