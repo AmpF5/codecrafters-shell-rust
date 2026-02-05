@@ -2,7 +2,10 @@ mod command;
 mod commands;
 mod utils;
 
-use std::io::{self, Write};
+use std::{
+    fs::OpenOptions,
+    io::{self, Write},
+};
 
 use log::info;
 
@@ -49,7 +52,14 @@ fn setup_logger() -> Result<(), fern::InitError> {
             ))
         })
         .level(log::LevelFilter::Debug)
-        .chain(fern::log_file("output.log")?)
+        .chain(
+            OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(true)
+                .open("output.log")?,
+        )
+        // .chain(fern::log_file("output.log")?)
         .apply()?;
     Ok(())
 }

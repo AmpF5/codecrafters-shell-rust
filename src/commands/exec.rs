@@ -1,8 +1,12 @@
-use std::process::Command;
+use std::{ffi::OsStr, process::Command};
 
-pub fn execute(cmd: &str, args: &str) {
+pub fn execute<I, S>(cmd: &str, args: I)
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<OsStr>,
+{
     let mut command = Command::new(cmd);
-    command.args(args.split_whitespace());
+    command.args(args);
     match command.output() {
         Ok(output) => {
             let stdout = String::from_utf8_lossy(&output.stdout);

@@ -10,7 +10,7 @@ pub enum Command {
     NotFound { cmd: String },
     Echo { args: String },
     Type { args: String },
-    Exec { cmd: String, args: String },
+    Exec { cmd: String, args: Vec<String> },
     Pwd,
     Cd { args: String },
 }
@@ -19,7 +19,7 @@ impl Command {
     pub fn new(input: &str) -> Command {
         let (cmd, args) = crate::utils::string::get_cmd_and_args(input);
 
-        info!("Parsed input\n cmd: {}\n args: {:?}", &cmd, &args);
+        info!("Parsed input\n cmd: {}\n args: {:?}\n", &cmd, &args);
 
         if COMMANDS.contains(&cmd.as_str()) {
             match cmd.as_str() {
@@ -38,10 +38,7 @@ impl Command {
             }
         } else {
             match crate::utils::files::find_exe_in_env(&cmd) {
-                Some(_) => Command::Exec {
-                    cmd,
-                    args: args.first().cloned().unwrap_or_default(),
-                },
+                Some(_) => Command::Exec { cmd, args },
                 None => Command::NotFound { cmd },
             }
         }
