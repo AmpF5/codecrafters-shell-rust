@@ -1,3 +1,5 @@
+use log::info;
+
 const ESCAPED_CHARS_BY_BACKSLASH_IN_DOUBLE_QUOTES: [char; 5] = ['"', '\\', '$', '`', 'n'];
 
 /// Splits [&str] at the first " "
@@ -6,9 +8,10 @@ const ESCAPED_CHARS_BY_BACKSLASH_IN_DOUBLE_QUOTES: [char; 5] = ['"', '\\', '$', 
 ///
 /// # Safety
 /// Input cannot be empty
-pub fn get_cmd_and_args(input: &str) -> (String, Option<String>) {
+pub fn get_cmd_and_args(input: &str) -> (String, Vec<String>) {
     let v = get_formatted_input(input);
-    (v[0].clone(), v.get(1).cloned())
+    info!("After parsed: {:?}", v);
+    (v[0].clone(), v[1..].to_vec())
 }
 
 pub fn get_formatted_input(args: &str) -> Vec<String> {

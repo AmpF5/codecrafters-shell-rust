@@ -1,7 +1,6 @@
 use std::{env, path::PathBuf};
 
 pub fn execute(path: &str) {
-    let path = crate::utils::string::get_formatted_input(path).join(" ");
     let mut path_chars = path.chars();
     let Some(path_type) = path_chars.next() else {
         eprintln!("cannot get path");
@@ -10,8 +9,8 @@ pub fn execute(path: &str) {
 
     let new_path = match path_type {
         '/' => {
-            if crate::utils::files::is_dir_exists(&path) {
-                PathBuf::from(&path)
+            if crate::utils::files::is_dir_exists(path) {
+                PathBuf::from(path)
             } else {
                 eprintln!("cd: {path}: No such file or directory");
                 return;
@@ -30,7 +29,7 @@ pub fn execute(path: &str) {
                 eprintln!("cannot get current dir");
                 return;
             };
-            current_dir.join(&path)
+            current_dir.join(path)
         }
     };
 

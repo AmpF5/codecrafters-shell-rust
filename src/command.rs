@@ -1,3 +1,5 @@
+use log::info;
+
 use crate::commands::{self};
 
 pub const COMMANDS: [&str; 5] = ["echo", "exit", "type", "pwd", "cd"];
@@ -17,18 +19,20 @@ impl Command {
     pub fn new(input: &str) -> Command {
         let (cmd, args) = crate::utils::string::get_cmd_and_args(input);
 
+        info!("Parsed input\n cmd: {}\n args: {:?}", &cmd, &args);
+
         if COMMANDS.contains(&cmd.as_str()) {
             match cmd.as_str() {
                 "exit" => Command::Exit,
                 "echo" => Command::Echo {
-                    args: args.unwrap_or_default(),
+                    args: args.join(" "),
                 },
                 "type" => Command::Type {
-                    args: args.unwrap_or_default(),
+                    args: args.join(" "),
                 },
                 "pwd" => Command::Pwd,
                 "cd" => Command::Cd {
-                    args: args.unwrap_or("~".to_owned()),
+                    args: args.first().cloned().unwrap_or(String::from("~")),
                 },
                 _ => Command::NotFound { cmd },
             }
@@ -36,7 +40,7 @@ impl Command {
             match crate::utils::files::find_exe_in_env(&cmd) {
                 Some(_) => Command::Exec {
                     cmd,
-                    args: args.unwrap_or_default(),
+                    args: args.first().cloned().unwrap_or_default(),
                 },
                 None => Command::NotFound { cmd },
             }
